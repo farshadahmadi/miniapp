@@ -1,0 +1,145 @@
+swagger: "2.0"
+info:
+  title: API
+  description: api for mini application to investigate split sdk synchronization problem
+  version: 1.0.0
+host: "localhost"
+basePath: /v1
+schemes:
+  - http
+tags:
+  - name: feature
+    description: Feature-flag service related endpoints.
+paths:
+  /feature/{feature}:
+    post:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: feature
+          required: true
+          type: string
+          description: feature id.
+        - in: body
+          name: body
+          schema:
+            $ref: "#/definitions/FeatureFlagRequest"
+          required: true
+      responses:
+        "200":
+          description: "History request success"
+          schema:
+            $ref: "#/definitions/FeatureFlagResponse"
+        "401":
+          description: 401 Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: 500 Internal server error
+          schema:
+            $ref: "#/definitions/InternalServerErrorResponse"
+        "503":
+          description: 503 Service Unavailable
+          schema:
+            $ref: "#/definitions/ServiceUnavailableResponse"
+        "504":
+          description: 504 Gateway Timeout
+          schema:
+            $ref: "#/definitions/GatewayTimeoutResponse"
+        default:
+          description: Default response
+          schema:
+            $ref: "#/definitions/DefaultResponse"
+      tags:
+        - feature
+      operationId: featureFlag
+      summary: For requesting feature flag data.
+
+definitions:
+  FeatureFlagRequest:
+    type: object
+    properties:
+      trafficId:
+        $ref: "#/definitions/TrafficId"
+      attributes:
+        type: object
+        additionalProperties:
+          type: object
+    required:
+      - trafficId
+  TrafficId:
+    type: string
+    pattern: ^[\S]{1,}$
+  FeatureFlagResponse:
+    type: "object"
+    properties:
+      flag:
+        type: "string"
+      value:
+        type: "string"
+  InternalServerErrorResponse:
+    description: 500 Internal server error
+    properties:
+      code:
+        enum:
+          - 500
+        type: integer
+      message:
+        type: string
+    required:
+      - code
+      - message
+    type: object
+  GatewayTimeoutResponse:
+    description: 504 Gateway Timeout - The server cannot handle the request. Generally, this is a temporary state
+    properties:
+      code:
+        enum:
+          - 504
+        type: integer
+      message:
+        type: string
+    required:
+      - code
+      - message
+    type: object
+  DefaultResponse:
+    description: Default response
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    required:
+      - code
+      - message
+    type: object
+  UnauthorizedResponse:
+    description: 401 Unauthorized
+    properties:
+      code:
+        enum:
+          - 401
+        type: integer
+      message:
+        type: string
+    required:
+      - code
+      - message
+    type: object
+  ServiceUnavailableResponse:
+    description: 503 Service unavailable - The server cannot handle the request (because it is overloaded or down for maintenance). Generally, this is a temporary state
+    properties:
+      code:
+        enum:
+          - 503
+        type: integer
+      message:
+        type: string
+    required:
+      - code
+      - message
+    type: object

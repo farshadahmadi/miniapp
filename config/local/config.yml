@@ -1,0 +1,9 @@
+FeatureFlag:
+    OperationMode: inmemory-standalone
+    # "redis-consumer", "inmemory-standalone" or "localhost"
+    APIKey: <put-your-key>
+    RedisPrefix: ""
+App:
+    Host: localhost
+    MiniappPort: 8050
+    Scheme: http
